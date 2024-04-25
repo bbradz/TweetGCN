@@ -51,7 +51,7 @@ Now, we want to formulate a loss function to minimize for. Let $Y \in {l_k | k =
 
 We can now formally define our problem as follows: given $X$ and $Y$, we want to learn a function $F$ paramaterized with $W$ that maps $X$ to $Y$: $F(X) \to Y$. We thus minimize the loss function as follows:
 
-$$\argmin_{E,W} \mathcal{L}(Y, F(X, W, E))$$
+$$\text{arg}\min_{E,W} \mathcal{L}(Y, F(X, W, E))$$
 
 Challenges: 
 
