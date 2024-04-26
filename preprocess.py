@@ -17,10 +17,13 @@ Args:
 Outputs:
     data.json (file): A JSON file of cleaned text
 """
-def process_file(file_path, output_path=None):
+def process_file(file_path):
 
     # Read the JSON file and parse each line into a dictionary
     json_objects = []
+    features = []
+    labels = []
+
     with open(file_path, 'r') as txt:
         for jsonObj in txt:
             dict = json.loads(jsonObj)
@@ -58,14 +61,11 @@ def process_file(file_path, output_path=None):
         obj_text = re.sub(r"\s*@.*[A-z]\s*", " ", obj_text)                      # Remove rest of mentions
         obj_text = re.sub(r"\s+", ' ', obj_text).lstrip()                        # Remove repeated spaces and leading whitespace
 
-        obj["text"] = obj_text
+        obj_label = obj["label"]
 
-    print(json_objects)
+        features.append(obj_text)
+        labels.append(obj_label)
 
-    if output_path == None: output_file_path = "data.json"
-    else: output_file_path = output_path
+    assert len(features)==len(labels)
 
-    with open(output_file_path, "w") as outfile:
-        json.dump(json_objects, outfile)
-
-#process_file("tweet_topic_single/dataset/split_coling2022_random/test_random.single.json")
+    return [features, labels]
