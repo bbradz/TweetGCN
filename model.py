@@ -11,7 +11,7 @@ class TextGCN(nn.Module):
     def __init__(self, input_size, num_classes):
         super(TextGCN, self).__init__()
 
-        self.hidden = 64
+        self.hidden = 512
 
         self.conv1 = GraphConvLayer(input_size, self.hidden)
         self.conv2 = GraphConvLayer(self.hidden, num_classes)

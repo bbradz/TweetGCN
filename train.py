@@ -44,6 +44,10 @@ def train(epoch):
     preds = model(train_features, train_adj)
 
     training_loss = loss_fn(preds, train_labels)
+
+    softmax = torch.nn.Softmax()
+    preds = softmax(preds)
+
     training_accuracy = accuracy(preds, train_labels)
 
     training_loss.backward()
@@ -67,7 +71,7 @@ def test():
 
 
 # Train model
-for epoch in range(4):
+for epoch in range(25):
     train(epoch)
 print("Optimization Finished!")
 
