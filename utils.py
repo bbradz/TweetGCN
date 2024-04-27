@@ -11,6 +11,15 @@ def encode_onehot(labels):
     labels_onehot = np.array(list(map(classes_dict.get, labels)), dtype=np.int32)
     return labels_onehot
 
+def build_graph(features):
+    sim_matrix = cosine_similarity(features)
+    adj = np.array(sim_matrix)
+    adj_norm = adj / adj.sum(axis=1, keepdims=True)
+
+    adj_norm = torch.FloatTensor(adj_norm)
+
+    return adj_norm
+
 def load_data(path="tweet_topic_single/dataset/split_coling2022_random/test_random.single.json", dataset="tweet_topic_single"):
     print('Loading {} dataset...'.format(dataset))
 
@@ -23,22 +32,15 @@ def load_data(path="tweet_topic_single/dataset/split_coling2022_random/test_rand
     model = SentenceTransformer('all-MiniLM-L6-v2')
     features = model.encode(features_str)
 
-    # Build symmetric adjacency matrix via cosine similarity of feature embeddings
-    sim_matrix = cosine_similarity(features)
-    adj = np.array(sim_matrix)
-
-    # Normalize across each row
-    adj_norm = adj / adj.sum(axis=1, keepdims=True)
-
-    idx_train = range(1000)
-    idx_val = range(1000, 2000)
+    idx_train = range(2000)
     idx_test = range(2000, 3399)
 
     features = torch.FloatTensor(features) # Tensor of features
-    labels = torch.LongTensor(np.where(labels)[1]) # Tensor of labels
+    labels = torch.FloatTensor(labels) # Tensor of labels
 
-    idx_train = torch.LongTensor(list(idx_train)) # Tensor of training indexes
-    idx_val = torch.LongTensor(list(idx_val)) # Tensor of validation indexes
-    idx_test = torch.LongTensor(list(idx_test)) # Tensor of testing indexes
+    train_features = torch.FloatTensor(features[idx_train])
+    train_labels = torch.FloatTensor(labels[idx_train])
+    test_features = torch.FloatTensor(features[idx_test])
+    test_labels = torch.FloatTensor(labels[idx_test])
 
-    return adj_norm, features, labels, idx_train, idx_val, idx_test
+    return train_features, train_labels, test_features, test_labels
