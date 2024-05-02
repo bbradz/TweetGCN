@@ -71,7 +71,7 @@ def test():
 
 
 # Train model
-for epoch in range(25):
+for epoch in range(10):
     train(epoch)
 print("Optimization Finished!")
 
