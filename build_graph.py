@@ -6,7 +6,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 # loading dataset
 # TODO: this assumes csv structure with text column
-df = pd.read_csv('path_to_your_dataset.csv')
+df = pd.read_csv('data.json')
 texts = df['text'].tolist()
 
 # load sentence bert
