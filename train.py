@@ -59,6 +59,7 @@ def train(epoch):
 def test():
     model.eval()
     preds = model(test_features, test_adj)
+    print(f"y_preds: {torch.argmax(preds, dim=1)}")
 
     testing_loss = loss_fn(preds, test_labels)
     testing_accuracy = accuracy(preds, test_labels)
@@ -69,7 +70,7 @@ def test():
 
 
 # Train model
-for epoch in range(50):
+for epoch in range(1000):
     train(epoch)
 print("Optimization Finished!")
 

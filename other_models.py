@@ -36,44 +36,45 @@ train_labels_indices = torch.tensor(y_train, dtype=torch.int64)
 test_labels_indices = torch.tensor(y_test, dtype=torch.int64)
 
 # Initialize GCN Model
+print(f"np.unique(labels).size: {np.unique(labels).size}")
 gcn_model = TextGCN(input_size=train_features.shape[1], num_classes=np.unique(labels).size)
 optimizer = optim.Adam(gcn_model.parameters())
 loss_fn = torch.nn.CrossEntropyLoss()
 
-# Training function
-def train(epoch):
+for epoch in range(1000):
     gcn_model.train()
     optimizer.zero_grad()
+
     preds = gcn_model(train_features, train_adj)
-    loss = loss_fn(preds, train_labels_indices)  # pass class indices instead of one-hot
-    loss.backward()
+    training_loss = loss_fn(preds, train_labels_indices)
+
+    training_loss.backward()
     optimizer.step()
-    return loss.item(), accuracy(preds, train_labels_indices).item()  # pass class indices to accuracy
 
-# Test function
-def test():
-    gcn_model.eval()
-    with torch.no_grad():
-        preds = gcn_model(test_features, test_adj)
-        return preds, loss_fn(preds, test_labels_indices).item(), accuracy(preds, test_labels_indices).item()  # pass class indices
+    softmax = torch.nn.Softmax(dim=1)
+    probs = softmax(preds)
+    predicted_labels = torch.argmax(probs, dim=1)
+    train_accuracy = (predicted_labels == train_labels_indices).float().mean()
+    print(f'Epoch {epoch + 1}, Loss: {round(training_loss.item(), 4)}, Training Accuracy: {round(train_accuracy.item(), 4)}')
 
-# Fix accuracy function to handle indices directly
-def accuracy(preds, actual):
-    preds = torch.argmax(preds, dim=1)
-    return (preds == actual).float().mean()
-
-# Train and Evaluate GCN
-for epoch in range(50):
-    train_loss, train_acc = train(epoch)
-    print(f'Epoch: {epoch+1}, Loss: {train_loss:.4f}, Accuracy: {train_acc:.4f}')
-
-gcn_preds, test_loss, test_acc = test()
-print(f'Test Loss: {test_loss:.4f}, Test Accuracy: {test_acc:.4f}')
+gcn_model.eval()
+preds = gcn_model(test_features, test_adj)
 
 # Convert one-hot encoded predictions to label indices for comparison
-print(gcn_preds)
-gcn_predictions = torch.argmax(gcn_preds, dim=1).cpu().numpy()
-print(gcn_predictions)
+gcn_predictions = torch.argmax(preds, dim=1)
+cm = confusion_matrix(y_test, gcn_predictions)
+FP = cm.sum(axis=0) - np.diag(cm)
+FN = cm.sum(axis=1) - np.diag(cm)
+TP = np.diag(cm)
+TN = cm.sum() - (FP + FN + TP)
+FPR = FP / (FP + TN)
+FNR = FN / (FN + TP)
+
+print(" ")
+print(f"GCN Mean FPR: ", np.mean(FPR))
+print(f"GCN Mean FNR: ", np.mean(FNR))
+print(" ")
+
 predictions = {}
 predictions['GCN'] = gcn_predictions
 
