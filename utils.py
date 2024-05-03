@@ -32,8 +32,8 @@ def load_data(path="tweet_topic_single/dataset/split_coling2022_random/test_rand
     model = SentenceTransformer('all-MiniLM-L6-v2')
     features = model.encode(features_str)
 
-    idx_train = range(2000)
-    idx_test = range(2000, 3399)
+    idx_train = range(2719)
+    idx_test = range(2719, 3399)
 
     features = torch.FloatTensor(features) # Tensor of features
     labels = torch.FloatTensor(labels) # Tensor of labels
@@ -44,3 +44,17 @@ def load_data(path="tweet_topic_single/dataset/split_coling2022_random/test_rand
     test_labels = torch.FloatTensor(labels[idx_test])
 
     return train_features, train_labels, test_features, test_labels
+
+def load_all(path="tweet_topic_single/dataset/split_coling2022_random/test_random.single.json", dataset="tweet_topic_single"):
+    print('Loading {} dataset...'.format(dataset))
+
+    output = process_file(path)
+    features_str, labels_str = output[0], output[1]
+
+    # Convert features and labels from string to correct types
+    labels = np.array(labels_str, dtype=np.float32)
+    
+    model = SentenceTransformer('all-MiniLM-L6-v2')
+    features = model.encode(features_str)
+
+    return labels, features

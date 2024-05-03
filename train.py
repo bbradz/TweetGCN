@@ -8,9 +8,7 @@ import torch
 import torch.nn.functional as F
 import torch.optim as optim
 
-import utils
 import model
-
 from utils import load_data, build_graph
 from model import TextGCN
 
@@ -71,7 +69,7 @@ def test():
 
 
 # Train model
-for epoch in range(10):
+for epoch in range(50):
     train(epoch)
 print("Optimization Finished!")
 
