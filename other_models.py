@@ -71,7 +71,9 @@ gcn_preds, test_loss, test_acc = test()
 print(f'Test Loss: {test_loss:.4f}, Test Accuracy: {test_acc:.4f}')
 
 # Convert one-hot encoded predictions to label indices for comparison
+print(gcn_preds)
 gcn_predictions = torch.argmax(gcn_preds, dim=1).cpu().numpy()
+print(gcn_predictions)
 predictions = {}
 predictions['GCN'] = gcn_predictions
 
