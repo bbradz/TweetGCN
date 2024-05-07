@@ -3,6 +3,8 @@ import scipy.sparse as sp
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 import torch
+import matplotlib.pyplot as plt
+from sklearn.manifold import TSNE
 from preprocess import process_file
 
 def encode_onehot(labels):

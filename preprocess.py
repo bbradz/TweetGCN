@@ -3,6 +3,8 @@ import json
 import string
 import contractions
 
+from sentence_transformers import SentenceTransformer
+
 """
 Process and clean text data from a JSON file specified by:
 
@@ -69,3 +71,5 @@ def process_file(file_path):
     assert len(features)==len(labels)
 
     return [features, labels]
+
+process_file("tweet_topic_single/dataset/split_coling2022_random/test_random.single.json")
